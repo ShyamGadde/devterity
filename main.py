@@ -19,6 +19,11 @@ def start_screen(stdscr):
     curses.noecho()
 
 
+def load_categories():
+    with open("words.json") as f:
+        return list(json.load(f).keys())
+
+
 def load_words(category: str):
     with open("words.json") as f:
         return json.load(f)[category]
