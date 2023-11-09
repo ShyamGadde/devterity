@@ -19,6 +19,31 @@ def start_screen(stdscr):
     curses.noecho()
 
 
+def display_menu(stdscr):
+    while True:
+        stdscr.clear()
+        stdscr.addstr("\n1. Start Typing Test")
+        stdscr.addstr("\n2. View Leaderboard")
+        stdscr.addstr("\n3. Exit")
+        stdscr.addstr("\n\n# [1/2/3]: ")
+        stdscr.refresh()
+
+        curses.echo()
+        choice = stdscr.getstr().decode("utf-8")
+        curses.noecho()
+
+        if choice == "1":
+            wpm_test(stdscr)
+        elif choice == "2":
+            show_leaderboard(stdscr)
+        elif choice == "3":
+            break
+        else:
+            stdscr.addstr(6, 0, "Invalid choice!")
+            stdscr.refresh()
+            time.sleep(1)
+
+
 def load_categories():
     with open("words.json") as f:
         return list(json.load(f).keys())
@@ -27,6 +52,36 @@ def load_categories():
 def load_words(category: str):
     with open("words.json") as f:
         return json.load(f)[category]
+
+
+def show_leaderboard(stdscr):
+    stdscr.clear()
+    stdscr.addstr("Leaderboard\n\n")
+    stdscr.addstr("\tUsername\t\tWPM\n", curses.color_pair(3))
+
+    with open("leaderboard.json") as f:
+        leaderboard = json.load(f)
+
+    for i, (username, wpm) in enumerate(
+        sorted(leaderboard.items(), key=lambda entry: entry[1], reverse=True), start=1
+    ):
+        stdscr.addstr(f"{i}.\t{username}\t\t\t{wpm} WPM\n")
+    stdscr.addstr("\n\nPress any key to continue...")
+    stdscr.refresh()
+    stdscr.getkey()
+
+
+def update_leaderboard(wpm: int):
+    with open("leaderboard.json") as f:
+        leaderboard = json.load(f)
+
+    if username in leaderboard:
+        leaderboard[username] = max(leaderboard[username], wpm)
+    else:
+        leaderboard[username] = wpm
+
+    with open("leaderboard.json", "w") as f:
+        json.dump(leaderboard, f, indent=2)
 
 
 def display_text(stdscr, target: str, current: list, wpm=0):
@@ -68,7 +123,11 @@ def wpm_test(stdscr):
         stdscr.refresh()
 
         if "".join(current_text) == target_text:
+            update_leaderboard(wpm)
             stdscr.addstr(4, 0, "Completed!")
+            stdscr.addstr(5, 0, "Press any key to continue...")
+            stdscr.nodelay(False)
+            stdscr.getkey()
             break
 
         try:
@@ -92,16 +151,7 @@ def main(stdscr):
     curses.init_pair(3, curses.COLOR_YELLOW, curses.COLOR_BLACK)
 
     start_screen(stdscr)
-
-    while True:
-        wpm_test(stdscr)
-        stdscr.addstr(5, 0, "Press any key to retry or ESC to exit.")
-
-        stdscr.nodelay(False)
-        key = stdscr.getkey()
-
-        if ord(key) == 27:
-            break
+    display_menu(stdscr)
 
 
 if __name__ == "__main__":
