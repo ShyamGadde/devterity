@@ -19,8 +19,8 @@ def display_text(stdscr, target: str, current: list, wpm=0):
         color = 1
         if c != correct_c:
             color = 2
-        if c == " ":
-            c = "_"
+            if c == " ":
+                c = "_"
         stdscr.addstr(0, i, c, curses.color_pair(color))
 
 
