@@ -6,6 +6,13 @@ import time
 username = "Guest"
 
 
+def get_input(stdscr):
+    curses.echo()
+    user_input = stdscr.getstr().decode("utf-8")
+    curses.noecho()
+    return user_input
+
+
 def start_screen(stdscr):
     stdscr.clear()
     stdscr.addstr("Welcome to ")
@@ -13,10 +20,8 @@ def start_screen(stdscr):
     stdscr.addstr("\n\nPlease enter your username: ")
     stdscr.refresh()
 
-    curses.echo()
     global username
-    username = stdscr.getstr().decode("utf-8")
-    curses.noecho()
+    username = get_input(stdscr)
 
 
 def display_menu(stdscr):
@@ -28,9 +33,7 @@ def display_menu(stdscr):
         stdscr.addstr("\n\n# [1/2/3]: ")
         stdscr.refresh()
 
-        curses.echo()
-        choice = stdscr.getstr().decode("utf-8")
-        curses.noecho()
+        choice = get_input(stdscr)
 
         if choice == "1":
             wpm_test(stdscr)
