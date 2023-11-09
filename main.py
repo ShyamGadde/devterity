@@ -60,15 +60,19 @@ def load_words(category: str):
 def show_leaderboard(stdscr):
     stdscr.clear()
     stdscr.addstr("Leaderboard\n\n")
-    stdscr.addstr("\tUsername\t\tWPM\n", curses.color_pair(3))
 
-    with open("leaderboard.json") as f:
-        leaderboard = json.load(f)
+    try:
+        with open("leaderboard.json") as f:
+            stdscr.addstr("\tUsername\t\tWPM\n", curses.color_pair(3))
+            leaderboard = json.load(f)
+            for i, (username, wpm) in enumerate(
+                sorted(leaderboard.items(), key=lambda entry: entry[1], reverse=True),
+                start=1,
+            ):
+                stdscr.addstr(f"{i}.\t{username}\t\t\t{wpm} WPM\n")
+    except FileNotFoundError:
+        stdscr.addstr("The leaderboard is empty!\n")
 
-    for i, (username, wpm) in enumerate(
-        sorted(leaderboard.items(), key=lambda entry: entry[1], reverse=True), start=1
-    ):
-        stdscr.addstr(f"{i}.\t{username}\t\t\t{wpm} WPM\n")
     stdscr.addstr("\n\nPress any key to continue...")
     stdscr.refresh()
     stdscr.getkey()
