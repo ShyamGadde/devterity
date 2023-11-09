@@ -83,6 +83,8 @@ def main(stdscr):
     while True:
         wpm_test(stdscr)
         stdscr.addstr(4, 0, "Completed!\nPress any key to retry or ESC to exit.")
+
+        stdscr.nodelay(False)
         key = stdscr.getkey()
 
         if ord(key) == 27:
