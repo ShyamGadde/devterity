@@ -6,7 +6,8 @@ import time
 
 def start_screen(stdscr):
     stdscr.clear()
-    stdscr.addstr("Welcome to Devterity!")
+    stdscr.addstr("Welcome to ")
+    stdscr.addstr("Devterity!", curses.color_pair(3))
     stdscr.addstr("\nPress any key to start typing.")
     stdscr.refresh()
     stdscr.getkey()
@@ -56,7 +57,7 @@ def wpm_test(stdscr):
         stdscr.refresh()
 
         if "".join(current_text) == target_text:
-            stdscr.nodelay(False)
+            stdscr.addstr(4, 0, "Completed!")
             break
 
         try:
@@ -65,6 +66,7 @@ def wpm_test(stdscr):
             continue
 
         if ord(key) == 27:
+            stdscr.addstr(4, 0, "Exiting...")
             break
 
         if key in ("KEY_BACKSPACE", "\b", "\x7f") and current_text:
@@ -82,7 +84,7 @@ def main(stdscr):
 
     while True:
         wpm_test(stdscr)
-        stdscr.addstr(4, 0, "Completed!\nPress any key to retry or ESC to exit.")
+        stdscr.addstr(5, 0, "Press any key to retry or ESC to exit.")
 
         stdscr.nodelay(False)
         key = stdscr.getkey()
