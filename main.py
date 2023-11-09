@@ -1,6 +1,5 @@
 import curses
 import time
-from curses import wrapper
 
 
 def start_screen(stdscr):
@@ -17,7 +16,11 @@ def display_text(stdscr, target: str, current: list, wpm=0):
 
     for i, c in enumerate(current):
         correct_c = target[i]
-        color = 1 if c == correct_c else 2
+        color = 1
+        if c != correct_c:
+            color = 2
+        if c == " ":
+            c = "_"
         stdscr.addstr(0, i, c, curses.color_pair(color))
 
 
@@ -35,6 +38,10 @@ def wpm_test(stdscr):
         stdscr.clear()
         display_text(stdscr, target_text, current_text, wpm)
         stdscr.refresh()
+
+        if "".join(current_text) == target_text:
+            stdscr.nodelay(False)
+            break
 
         try:
             key = stdscr.getkey()
@@ -56,7 +63,15 @@ def main(stdscr):
     curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLACK)
 
     start_screen(stdscr)
-    wpm_test(stdscr)
+
+    while True:
+        wpm_test(stdscr)
+        stdscr.addstr(4, 0, "Completed!\nPress any key to continue or ESC to exit.")
+        key = stdscr.getkey()
+
+        if ord(key) == 27:
+            break
 
 
-wrapper(main)
+if __name__ == "__main__":
+    curses.wrapper(main)
