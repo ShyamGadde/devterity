@@ -1,4 +1,6 @@
 import curses
+import json
+import random
 import time
 
 
@@ -10,8 +12,13 @@ def start_screen(stdscr):
     stdscr.getkey()
 
 
+def load_words(category: str):
+    with open("words.json") as f:
+        return json.load(f)[category]
+
+
 def display_text(stdscr, target: str, current: list, wpm=0):
-    stdscr.addstr(target)
+    stdscr.addstr(2, 0, target)
     incorrect_chars = 0
 
     for i, c in enumerate(current):
@@ -20,17 +27,21 @@ def display_text(stdscr, target: str, current: list, wpm=0):
         if c != correct_c:
             incorrect_chars += 1
             color = 2
+            # Replace incorrect whitespace with underscore
             if c == " ":
                 c = "_"
-        stdscr.addstr(0, i, c, curses.color_pair(color))
+        stdscr.addstr(2, i, c, curses.color_pair(color))
 
     accuracy = round((1 - incorrect_chars / (len(current) or 1)) * 100)
-
-    stdscr.addstr(2, 0, f"WPM: {wpm}\tAccuracy: {accuracy}%", curses.color_pair(3))
+    stdscr.addstr(0, 0, f"WPM: {wpm}\t\tAccuracy: {accuracy}%", curses.color_pair(3))
 
 
 def wpm_test(stdscr):
-    target_text = "The quick brown fox jumps over the lazy dog"
+    category = "Python"
+    words = load_words(category)
+    random.shuffle(words)
+    target_text = " ".join(words[:20])
+
     current_text = []
     wpm = 0
     start_time = time.time()
@@ -71,7 +82,7 @@ def main(stdscr):
 
     while True:
         wpm_test(stdscr)
-        stdscr.addstr(4, 0, "Completed!\nPress any key to continue or ESC to exit.")
+        stdscr.addstr(4, 0, "Completed!\nPress any key to retry or ESC to exit.")
         key = stdscr.getkey()
 
         if ord(key) == 27:
