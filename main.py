@@ -107,7 +107,22 @@ def display_text(stdscr, target: str, current: list, wpm=0):
 
 
 def wpm_test(stdscr):
-    category = "Python"
+    categories = load_categories()
+    while True:
+        stdscr.clear()
+        stdscr.addstr("Choose a category:\n\n")
+        for i, category in enumerate(categories, start=1):
+            stdscr.addstr(f"{i}. {category}\n")
+        stdscr.addstr("\n# Enter category name: ")
+        stdscr.refresh()
+        category = get_input(stdscr)
+
+        if category in categories:
+            break
+        stdscr.addstr(len(categories) + 5, 0, "Invalid category!")
+        stdscr.refresh()
+        time.sleep(1)
+
     words = load_words(category)
     random.shuffle(words)
     target_text = " ".join(words[:20])
