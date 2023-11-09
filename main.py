@@ -3,14 +3,20 @@ import json
 import random
 import time
 
+username = "Guest"
+
 
 def start_screen(stdscr):
     stdscr.clear()
     stdscr.addstr("Welcome to ")
     stdscr.addstr("Devterity!", curses.color_pair(3))
-    stdscr.addstr("\nPress any key to start typing.")
+    stdscr.addstr("\n\nPlease enter your username: ")
     stdscr.refresh()
-    stdscr.getkey()
+
+    curses.echo()
+    global username
+    username = stdscr.getstr().decode("utf-8")
+    curses.noecho()
 
 
 def load_words(category: str):
