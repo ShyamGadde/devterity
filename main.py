@@ -5,7 +5,7 @@ import time
 def start_screen(stdscr):
     stdscr.clear()
     stdscr.addstr("Welcome to Devterity!")
-    stdscr.addstr("\nPress any key to continue")
+    stdscr.addstr("\nPress any key to start typing.")
     stdscr.refresh()
     stdscr.getkey()
 
