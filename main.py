@@ -75,8 +75,11 @@ def show_leaderboard(stdscr):
 
 
 def update_leaderboard(wpm: int):
-    with open("leaderboard.json") as f:
-        leaderboard = json.load(f)
+    try:
+        with open("leaderboard.json") as f:
+            leaderboard = json.load(f)
+    except FileNotFoundError:
+        leaderboard = {}
 
     if username in leaderboard:
         leaderboard[username] = max(leaderboard[username], wpm)
