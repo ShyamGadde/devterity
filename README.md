@@ -2,4 +2,4 @@
 
 Boost your code typing dexterity from the terminal.
 
-<video src="docs/devtype-demo.mp4" controls title="Title"></video>
+https://github.com/ShyamGadde/devterity/assets/73636812/78dfa8ec-2e1b-4fd6-8148-2f493cad8f56
