@@ -162,6 +162,8 @@ def wpm_test(stdscr):
 
         if ord(key) == 27:
             stdscr.addstr(4, 0, "Exiting...")
+            stdscr.refresh()
+            time.sleep(0.5)
             break
 
         if key in ("KEY_BACKSPACE", "\b", "\x7f") and current_text:
