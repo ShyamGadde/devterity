@@ -1,5 +1,19 @@
 {
-  "Sachin": 40,
-  "Om": 50,
-  "Shyam": 77
+  "leaderboard": [
+    {
+      "username": "Shyam",
+      "wpm": 74,
+      "accuracy": 95
+    },
+    {
+      "username": "Om",
+      "wpm": 50,
+      "accuracy": 90
+    },
+    {
+      "username": "Sachin",
+      "wpm": 40,
+      "accuracy": 80
+    }
+  ]
 }
