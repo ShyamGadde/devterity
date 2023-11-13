@@ -63,13 +63,16 @@ def show_leaderboard(stdscr):
 
     try:
         with open("leaderboard.json") as f:
-            stdscr.addstr("\tUsername\t\tWPM\n", curses.color_pair(3))
-            leaderboard = json.load(f)
-            for i, (username, wpm) in enumerate(
-                sorted(leaderboard.items(), key=lambda entry: entry[1], reverse=True),
-                start=1,
-            ):
-                stdscr.addstr(f"{i}.\t{username}\t\t\t{wpm} WPM\n")
+            stdscr.addstr("\tUsername\t\tWPM\t\tAccuracy\n", curses.color_pair(3))
+            leaderboard = json.load(f)["leaderboard"]
+            leaderboard.sort(
+                key=lambda entry: (entry["wpm"], entry["accuracy"]), reverse=True
+            )
+
+            for entry in leaderboard:
+                stdscr.addstr(
+                    f"\t{entry['username']}\t\t\t{entry['wpm']} WPM\t\t{entry['accuracy']}\n"
+                )
     except FileNotFoundError:
         stdscr.addstr("The leaderboard is empty!\n")
 
@@ -78,20 +81,24 @@ def show_leaderboard(stdscr):
     stdscr.getkey()
 
 
-def update_leaderboard(wpm: int):
+def update_leaderboard(wpm: int, accuracy: int):
     try:
         with open("leaderboard.json") as f:
-            leaderboard = json.load(f)
+            leaderboard = json.load(f)["leaderboard"]
     except FileNotFoundError:
-        leaderboard = {}
+        leaderboard = []
 
-    if username in leaderboard:
-        leaderboard[username] = max(leaderboard[username], wpm)
+    for entry in leaderboard:
+        if entry["username"] == username:
+            if wpm > entry["wpm"]:
+                entry["wpm"] = wpm
+                entry["accuracy"] = accuracy
+            break
     else:
-        leaderboard[username] = wpm
+        leaderboard.append({"username": username, "wpm": wpm})
 
     with open("leaderboard.json", "w") as f:
-        json.dump(leaderboard, f, indent=2)
+        json.dump({"leaderboard": leaderboard}, f, indent=2)
 
 
 def display_text(stdscr, target: str, current: list, wpm=0):
@@ -111,6 +118,7 @@ def display_text(stdscr, target: str, current: list, wpm=0):
 
     accuracy = round((1 - incorrect_chars / (len(current) or 1)) * 100)
     stdscr.addstr(0, 0, f"WPM: {wpm}\t\tAccuracy: {accuracy}%", curses.color_pair(3))
+    return accuracy
 
 
 def wpm_test(stdscr):
@@ -136,6 +144,7 @@ def wpm_test(stdscr):
 
     current_text = []
     wpm = 0
+    accuracy = 100
     start_time = time.time()
     stdscr.nodelay(True)
 
@@ -144,11 +153,11 @@ def wpm_test(stdscr):
         wpm = round(len(current_text) / 5 / (time_elapsed / 60))
 
         stdscr.clear()
-        display_text(stdscr, target_text, current_text, wpm)
+        accuracy = display_text(stdscr, target_text, current_text, wpm)
         stdscr.refresh()
 
         if len(current_text) == len(target_text):
-            update_leaderboard(wpm)
+            update_leaderboard(wpm, accuracy)
             stdscr.addstr(4, 0, "Completed!")
             stdscr.addstr(5, 0, "Press any key to continue...")
             stdscr.nodelay(False)
