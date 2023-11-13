@@ -147,7 +147,7 @@ def wpm_test(stdscr):
         display_text(stdscr, target_text, current_text, wpm)
         stdscr.refresh()
 
-        if "".join(current_text) == target_text:
+        if len(current_text) == len(target_text):
             update_leaderboard(wpm)
             stdscr.addstr(4, 0, "Completed!")
             stdscr.addstr(5, 0, "Press any key to continue...")
