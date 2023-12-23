@@ -9,34 +9,51 @@ def main(stdscr):
     curses.init_pair(1, curses.COLOR_GREEN, -1)
     curses.init_pair(2, curses.COLOR_RED, -1)
     curses.init_pair(3, curses.COLOR_YELLOW, -1)
+    curses.init_pair(4, curses.COLOR_BLUE, -1)
+
+    assci_art = """
+     ___           __          _ __
+    / _ \___ _  __/ /____ ____(_) /___ __
+   / // / -_) |/ / __/ -_) __/ / __/ // /
+  /____/\__/|___/\__/\__/_/ /_/\__/\_, /
+                                  /___/ """
 
     stdscr.clear()
-    stdscr.addstr("Welcome to ")
-    stdscr.addstr("Devterity!", curses.color_pair(3))
-    stdscr.addstr("\n\nPlease enter your username: ")
+    stdscr.addstr(
+        1,
+        1,
+        assci_art,
+        curses.color_pair(4),
+    )
     stdscr.refresh()
 
-    username = get_user_input(stdscr)
+    subwin = stdscr.derwin(10, 2)
+    subwin.addstr("Welcome to ")
+    subwin.addstr("Devterity!", curses.color_pair(3))
+    subwin.addstr("\n\nPlease enter your username: ")
+    subwin.refresh()
+
+    username = get_user_input(subwin)
 
     while True:
-        stdscr.clear()
-        stdscr.addstr("\n1. Start Typing Test")
-        stdscr.addstr("\n2. View Leaderboard")
-        stdscr.addstr("\n3. Exit")
-        stdscr.addstr("\n\n# [1/2/3]: ")
-        stdscr.refresh()
+        subwin.clear()
+        subwin.addstr("\n1. Start Typing Test")
+        subwin.addstr("\n2. View Leaderboard")
+        subwin.addstr("\n3. Exit")
+        subwin.addstr("\n\n# [1/2/3]: ")
+        subwin.refresh()
 
-        choice = get_user_input(stdscr)
+        choice = get_user_input(subwin)
 
         if choice == "1":
-            wpm_test(stdscr, username)
+            wpm_test(subwin, username)
         elif choice == "2":
-            display_leaderboard(stdscr)
+            display_leaderboard(subwin)
         elif choice == "3":
             break
         else:
-            stdscr.addstr(6, 0, "Invalid choice!")
-            stdscr.refresh()
+            subwin.addstr(6, 0, "Invalid choice!")
+            subwin.refresh()
             time.sleep(1)
 
 
@@ -54,8 +71,6 @@ def wpm_test(stdscr, username):
     accuracy = 100
     start_time = time.time()
 
-    stdscr.nodelay(True)
-
     while True:
         wpm = calculate_wpm(start_time, current_text)
         accuracy = calculate_accuracy(target_text, current_text)
@@ -66,14 +81,10 @@ def wpm_test(stdscr, username):
             update_leaderboard(username, wpm, accuracy)
             stdscr.addstr(4, 0, "Completed!")
             stdscr.addstr(5, 0, "Press any key to continue...")
-            stdscr.nodelay(False)
             stdscr.getkey()
             break
 
-        try:
-            key = stdscr.getkey()
-        except Exception:
-            continue
+        key = stdscr.getkey()
 
         if key in ("KEY_BACKSPACE", "\b", "\x7f") and current_text:
             current_text.pop()
@@ -89,7 +100,7 @@ def wpm_test(stdscr, username):
 
 def display_leaderboard(stdscr):
     stdscr.clear()
-    stdscr.addstr("Leaderboard\n\n")
+    stdscr.addstr("Leaderboard\n\n", curses.A_UNDERLINE | curses.color_pair(3))
 
     try:
         with open("leaderboard.json") as f:
