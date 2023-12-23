@@ -64,14 +64,14 @@ def show_leaderboard(stdscr):
     try:
         with open("leaderboard.json") as f:
             stdscr.addstr("\tUsername\t\tWPM\t\tAccuracy\n", curses.color_pair(3))
-            leaderboard = json.load(f)["leaderboard"]
-            leaderboard.sort(
-                key=lambda entry: (entry["wpm"], entry["accuracy"]), reverse=True
+            data = list(json.load(f).items())
+            sorted_data = sorted(
+                data, key=lambda x: (x[1]["wpm"], x[1]["accuracy"]), reverse=True
             )
 
-            for entry in leaderboard:
+            for name, stats in sorted_data:
                 stdscr.addstr(
-                    f"\t{entry['username']}\t\t\t{entry['wpm']} WPM\t\t{entry['accuracy']}\n"
+                    f"\t{name}\t\t\t{stats['wpm']} WPM\t\t{stats['accuracy']}\n"
                 )
     except FileNotFoundError:
         stdscr.addstr("The leaderboard is empty!\n")
@@ -84,21 +84,15 @@ def show_leaderboard(stdscr):
 def update_leaderboard(wpm: int, accuracy: int):
     try:
         with open("leaderboard.json") as f:
-            leaderboard = json.load(f)["leaderboard"]
+            leaderboard = json.load(f)
     except FileNotFoundError:
-        leaderboard = []
+        leaderboard = {}
 
-    for entry in leaderboard:
-        if entry["username"] == username:
-            if wpm > entry["wpm"]:
-                entry["wpm"] = wpm
-                entry["accuracy"] = accuracy
-            break
-    else:
-        leaderboard.append({"username": username, "wpm": wpm})
+    if username not in leaderboard or wpm >= leaderboard[username]["wpm"]:
+        leaderboard[username] = {"wpm": wpm, "accuracy": accuracy}
 
     with open("leaderboard.json", "w") as f:
-        json.dump({"leaderboard": leaderboard}, f, indent=2)
+        json.dump(leaderboard, f, indent=2)
 
 
 def display_text(stdscr, target: str, current: list, wpm=0):

@@ -1,19 +1,26 @@
 {
-  "leaderboard": [
-    {
-      "username": "Shyam",
-      "wpm": 74,
-      "accuracy": 95
-    },
-    {
-      "username": "Om",
-      "wpm": 50,
-      "accuracy": 90
-    },
-    {
-      "username": "Sachin",
-      "wpm": 40,
-      "accuracy": 80
-    }
-  ]
+  "Shyam": {
+    "wpm": 74,
+    "accuracy": 95
+  },
+  "Om": {
+    "wpm": 50,
+    "accuracy": 90
+  },
+  "Sachin": {
+    "wpm": 40,
+    "accuracy": 80
+  },
+  "Rahul": {
+    "wpm": 30,
+    "accuracy": 70
+  },
+  "Rohit": {
+    "wpm": 20,
+    "accuracy": 60
+  },
+  "Z": {
+    "wpm": 76,
+    "accuracy": 100
+  }
 }
