@@ -10,54 +10,6 @@ from main import (
 )
 
 
-@pytest.fixture
-def mock_json_load():
-    with patch("json.load") as mock_json:
-        yield mock_json
-
-
-@pytest.fixture
-def mock_json_dump():
-    with patch("json.dump") as mock_json:
-        yield mock_json
-
-
-@pytest.fixture
-def mock_open_file():
-    with patch("builtins.open", new_callable=mock_open) as mock_file:
-        yield mock_file
-
-
-def test_update_leaderboard_new_user(mock_json_load, mock_json_dump, mock_open_file):
-    mock_json_load.return_value = {}
-    username = "test_user"
-    wpm = 100
-    accuracy = 90
-
-    update_leaderboard(username, wpm, accuracy)
-
-    mock_open_file.assert_any_call("leaderboard.json")
-    mock_json_dump.assert_called_once_with(
-        {username: {"wpm": wpm, "accuracy": accuracy}}, mock_open_file(), indent=2
-    )
-
-
-def test_update_leaderboard_existing_user_higher_wpm(
-    mock_json_load, mock_json_dump, mock_open_file
-):
-    username = "test_user"
-    wpm = 100
-    accuracy = 90
-    mock_json_load.return_value = {username: {"wpm": 80, "accuracy": 85}}
-
-    update_leaderboard(username, wpm, accuracy)
-
-    mock_open_file.assert_any_call("leaderboard.json")
-    mock_json_dump.assert_called_once_with(
-        {username: {"wpm": wpm, "accuracy": accuracy}}, mock_open_file(), indent=2
-    )
-
-
 @patch("curses.echo")
 @patch("curses.noecho")
 def test_get_user_input(mock_noecho, mock_echo):
@@ -123,3 +75,51 @@ def test_generate_test_string(mock_shuffle, mock_load_words, mock_select_categor
 )
 def test_calculate_accuracy(target, current, expected):
     assert calculate_accuracy(target, current) == expected
+
+
+@pytest.fixture
+def mock_json_load():
+    with patch("json.load") as mock_json:
+        yield mock_json
+
+
+@pytest.fixture
+def mock_json_dump():
+    with patch("json.dump") as mock_json:
+        yield mock_json
+
+
+@pytest.fixture
+def mock_open_file():
+    with patch("builtins.open", new_callable=mock_open) as mock_file:
+        yield mock_file
+
+
+def test_update_leaderboard_new_user(mock_json_load, mock_json_dump, mock_open_file):
+    mock_json_load.return_value = {}
+    username = "test_user"
+    wpm = 100
+    accuracy = 90
+
+    update_leaderboard(username, wpm, accuracy)
+
+    mock_open_file.assert_any_call("leaderboard.json")
+    mock_json_dump.assert_called_once_with(
+        {username: {"wpm": wpm, "accuracy": accuracy}}, mock_open_file(), indent=2
+    )
+
+
+def test_update_leaderboard_existing_user_higher_wpm(
+    mock_json_load, mock_json_dump, mock_open_file
+):
+    username = "test_user"
+    wpm = 100
+    accuracy = 90
+    mock_json_load.return_value = {username: {"wpm": 80, "accuracy": 85}}
+
+    update_leaderboard(username, wpm, accuracy)
+
+    mock_open_file.assert_any_call("leaderboard.json")
+    mock_json_dump.assert_called_once_with(
+        {username: {"wpm": wpm, "accuracy": accuracy}}, mock_open_file(), indent=2
+    )
