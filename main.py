@@ -38,7 +38,7 @@ def display_menu(stdscr):
         if choice == "1":
             wpm_test(stdscr)
         elif choice == "2":
-            show_leaderboard(stdscr)
+            display_leaderboard(stdscr)
         elif choice == "3":
             break
         else:
@@ -57,7 +57,7 @@ def load_words(category: str):
         return json.load(f)[category]
 
 
-def show_leaderboard(stdscr):
+def display_leaderboard(stdscr):
     stdscr.clear()
     stdscr.addstr("Leaderboard\n\n")
 
