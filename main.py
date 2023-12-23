@@ -95,23 +95,25 @@ def update_leaderboard(wpm: int, accuracy: int):
         json.dump(leaderboard, f, indent=2)
 
 
-def display_text(stdscr, target: str, current: list, wpm=0):
+def calculate_accuracy(target: str, current: list):
+    incorrect_chars = sum(c != target[i] for i, c in enumerate(current))
+    return round((1 - incorrect_chars / (len(current) or 1)) * 100)
+
+
+def update_window(stdscr, target: str, current: list, wpm=0, accuracy=100):
+    stdscr.addstr(0, 0, f"WPM: {wpm}\t\tAccuracy: {accuracy}%", curses.color_pair(3))
+
     stdscr.addstr(2, 0, target)
-    incorrect_chars = 0
 
     for i, c in enumerate(current):
-        correct_c = target[i]
         color = 1
-        if c != correct_c:
-            incorrect_chars += 1
+        if c != target[i]:
             color = 2
             # Replace incorrect whitespace with underscore
             if c == " ":
                 c = "_"
         stdscr.addstr(2, i, c, curses.color_pair(color))
 
-    accuracy = round((1 - incorrect_chars / (len(current) or 1)) * 100)
-    stdscr.addstr(0, 0, f"WPM: {wpm}\t\tAccuracy: {accuracy}%", curses.color_pair(3))
     return accuracy
 
 
@@ -145,9 +147,10 @@ def wpm_test(stdscr):
     while True:
         time_elapsed = max(time.time() - start_time, 1)
         wpm = round(len(current_text) / 5 / (time_elapsed / 60))
+        accuracy = calculate_accuracy(target_text, current_text)
 
         stdscr.clear()
-        accuracy = display_text(stdscr, target_text, current_text, wpm)
+        update_window(stdscr, target_text, current_text, wpm, accuracy)
         stdscr.refresh()
 
         if len(current_text) == len(target_text):
