@@ -43,7 +43,8 @@ def main(stdscr):
         choice = get_user_input(subwin)
 
         if choice == "1":
-            wpm_test(subwin, username)
+            target_text = generate_test_string(subwin)
+            wpm_test(subwin, username, target_text)
         elif choice == "2":
             display_leaderboard(subwin)
         elif choice == "3":
@@ -61,8 +62,7 @@ def get_user_input(stdscr):
     return user_input
 
 
-def wpm_test(stdscr, username):
-    target_text = generate_test_string(stdscr)
+def wpm_test(stdscr, username, target_text):
     current_text = []
     wpm = 0
     accuracy = 100
@@ -77,8 +77,10 @@ def wpm_test(stdscr, username):
         if len(current_text) == len(target_text):
             update_leaderboard(username, wpm, accuracy)
             stdscr.addstr(4, 0, "Completed!")
-            stdscr.addstr(5, 0, "Press any key to continue...")
-            stdscr.getkey()
+            stdscr.addstr(5, 0, "Press any TAB to retry or any key to exit to menu...")
+            key = stdscr.getkey()
+            if key == "\t":
+                wpm_test(stdscr, username, target_text)
             break
 
         key = stdscr.getkey()
