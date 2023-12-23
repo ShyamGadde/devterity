@@ -3,8 +3,6 @@ import json
 import random
 import time
 
-username = "Guest"
-
 
 def main(stdscr):
     curses.use_default_colors()
@@ -12,7 +10,13 @@ def main(stdscr):
     curses.init_pair(2, curses.COLOR_RED, -1)
     curses.init_pair(3, curses.COLOR_YELLOW, -1)
 
-    start_screen(stdscr)
+    stdscr.clear()
+    stdscr.addstr("Welcome to ")
+    stdscr.addstr("Devterity!", curses.color_pair(3))
+    stdscr.addstr("\n\nPlease enter your username: ")
+    stdscr.refresh()
+
+    username = get_user_input(stdscr)
 
     while True:
         stdscr.clear()
@@ -25,7 +29,7 @@ def main(stdscr):
         choice = get_user_input(stdscr)
 
         if choice == "1":
-            wpm_test(stdscr)
+            wpm_test(stdscr, username)
         elif choice == "2":
             display_leaderboard(stdscr)
         elif choice == "3":
@@ -36,17 +40,6 @@ def main(stdscr):
             time.sleep(1)
 
 
-def start_screen(stdscr):
-    stdscr.clear()
-    stdscr.addstr("Welcome to ")
-    stdscr.addstr("Devterity!", curses.color_pair(3))
-    stdscr.addstr("\n\nPlease enter your username: ")
-    stdscr.refresh()
-
-    global username
-    username = get_user_input(stdscr)
-
-
 def get_user_input(stdscr):
     curses.echo()
     user_input = stdscr.getstr().decode("utf-8")
@@ -54,7 +47,7 @@ def get_user_input(stdscr):
     return user_input
 
 
-def wpm_test(stdscr):
+def wpm_test(stdscr, username):
     target_text = generate_test_string(stdscr)
     current_text = []
     wpm = 0
@@ -70,7 +63,7 @@ def wpm_test(stdscr):
         update_window(stdscr, target_text, current_text, wpm, accuracy)
 
         if len(current_text) == len(target_text):
-            update_leaderboard(wpm, accuracy)
+            update_leaderboard(username, wpm, accuracy)
             stdscr.addstr(4, 0, "Completed!")
             stdscr.addstr(5, 0, "Press any key to continue...")
             stdscr.nodelay(False)
@@ -153,7 +146,7 @@ def update_window(stdscr, target: str, current: list, wpm=0, accuracy=100):
     stdscr.refresh()
 
 
-def update_leaderboard(wpm: int, accuracy: int):
+def update_leaderboard(username: str, wpm: int, accuracy: int):
     try:
         with open("leaderboard.json") as f:
             leaderboard = json.load(f)
