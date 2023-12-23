@@ -3,6 +3,8 @@ import json
 import random
 import time
 
+from prettytable import PrettyTable
+
 
 def main(stdscr):
     curses.use_default_colors()
@@ -19,12 +21,7 @@ def main(stdscr):
                                   /___/ """
 
     stdscr.clear()
-    stdscr.addstr(
-        1,
-        1,
-        assci_art,
-        curses.color_pair(4),
-    )
+    stdscr.addstr(1, 1, assci_art, curses.color_pair(4) | curses.A_BOLD)
     stdscr.refresh()
 
     subwin = stdscr.derwin(10, 2)
@@ -102,18 +99,20 @@ def display_leaderboard(stdscr):
     stdscr.clear()
     stdscr.addstr("Leaderboard\n\n", curses.A_UNDERLINE | curses.color_pair(3))
 
+    table = PrettyTable()
+    table.field_names = ["Username", "WPM", "Accuracy"]
+
     try:
         with open("leaderboard.json") as f:
-            stdscr.addstr("\tUsername\t\tWPM\t\tAccuracy\n", curses.color_pair(3))
             data = list(json.load(f).items())
             sorted_data = sorted(
                 data, key=lambda x: (x[1]["wpm"], x[1]["accuracy"]), reverse=True
             )
 
             for name, stats in sorted_data:
-                stdscr.addstr(
-                    f"\t{name}\t\t\t{stats['wpm']} WPM\t\t{stats['accuracy']}\n"
-                )
+                table.add_row([name, stats["wpm"], stats["accuracy"]])
+
+            stdscr.addstr(table.get_string())
     except FileNotFoundError:
         stdscr.addstr("The leaderboard is empty!\n")
 
