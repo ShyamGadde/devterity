@@ -6,7 +6,7 @@ import time
 username = "Guest"
 
 
-def get_input(stdscr):
+def get_user_input(stdscr):
     curses.echo()
     user_input = stdscr.getstr().decode("utf-8")
     curses.noecho()
@@ -21,7 +21,7 @@ def start_screen(stdscr):
     stdscr.refresh()
 
     global username
-    username = get_input(stdscr)
+    username = get_user_input(stdscr)
 
 
 def display_menu(stdscr):
@@ -33,7 +33,7 @@ def display_menu(stdscr):
         stdscr.addstr("\n\n# [1/2/3]: ")
         stdscr.refresh()
 
-        choice = get_input(stdscr)
+        choice = get_user_input(stdscr)
 
         if choice == "1":
             wpm_test(stdscr)
@@ -130,7 +130,7 @@ def wpm_test(stdscr):
             stdscr.addstr(f"{i}. {category}\n")
         stdscr.addstr("\n# Enter category name: ")
         stdscr.refresh()
-        category = get_input(stdscr)
+        category = get_user_input(stdscr)
 
         if category in categories:
             break
