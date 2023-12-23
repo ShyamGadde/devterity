@@ -114,8 +114,6 @@ def update_window(stdscr, target: str, current: list, wpm=0, accuracy=100):
                 c = "_"
         stdscr.addstr(2, i, c, curses.color_pair(color))
 
-    return accuracy
-
 
 def wpm_test(stdscr):
     categories = load_categories()
