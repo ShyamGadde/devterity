@@ -1,1 +1,2 @@
-windows-curses==2.3.2
+prettytable==3.9.0
+wcwidth==0.2.12
