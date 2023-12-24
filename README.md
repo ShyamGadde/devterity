@@ -1,6 +1,10 @@
 # Devterity
 
-https://github.com/ShyamGadde/devterity/assets/73636812/78dfa8ec-2e1b-4fd6-8148-2f493cad8f56
+
+
+https://github.com/ShyamGadde/devterity/assets/73636812/e85fdb98-36eb-4393-ba79-adb73ac2aaab
+
+
 
 ## Description
 
