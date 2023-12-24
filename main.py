@@ -13,7 +13,7 @@ def main(stdscr):
     curses.init_pair(3, curses.COLOR_YELLOW, -1)
     curses.init_pair(4, curses.COLOR_BLUE, -1)
 
-    assci_art = """
+    assci_art = r"""
      ___           __          _ __
     / _ \___ _  __/ /____ ____(_) /___ __
    / // / -_) |/ / __/ -_) __/ / __/ // /
